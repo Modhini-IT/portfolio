@@ -16,7 +16,7 @@ export default function SocialLinks({ profile }: SocialLinksProps) {
     <section id="connect" className="connect-section scroll-stage" aria-labelledby="connect-title">
       <div className="connect-sticky stage-sticky section-shell">
       <div className="section-heading connect-heading">
-        <p className="section-index">05 / CONNECT</p>
+        <p className="section-index">06 / CONNECT</p>
         <h2 id="connect-title">LET'S<br />CONNECT.</h2>
       </div>
 

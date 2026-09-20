@@ -14,7 +14,8 @@
     "motion": "latest",
     "ogl": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-icons": "^5.7.0"
   },
   "devDependencies": {
     "@types/react": "latest",

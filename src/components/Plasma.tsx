@@ -110,7 +110,12 @@ export default function Plasma({
     const containerEl = containerRef.current;
     if (!containerEl) return;
 
-    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let visible = false;
+    let raf = 0;
+    let lastFrame = 0;
+    let elapsed = 0;
+    let previousTime = 0;
     const customColorRgb = hexToRgb(color);
     const directionMultiplier = direction === 'reverse' ? -1 : 1;
 
@@ -163,6 +168,7 @@ export default function Plasma({
       const res = program.uniforms.iResolution.value as MutableVec2;
       res[0] = gl.drawingBufferWidth;
       res[1] = gl.drawingBufferHeight;
+      if (visible && !document.hidden) renderer.render({ scene: mesh });
     };
 
     const resizeObserver = new ResizeObserver(setSize);
@@ -170,18 +176,18 @@ export default function Plasma({
     setSize();
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!mouseInteractive) return;
+      if (!mouseInteractive || motionPreference.matches || !visible || document.hidden) return;
       const rect = containerEl.getBoundingClientRect();
       pendingMouse.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     };
-    containerEl.addEventListener('mousemove', handleMouseMove, { passive: true });
+    if (mouseInteractive) containerEl.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    let raf = 0;
-    let lastFrame = 0;
-    const started = performance.now();
+
     const frameInterval = 1000 / targetFps;
 
     const renderFrame = (time: number) => {
+      raf = 0;
+      if (!visible || document.hidden || motionPreference.matches) return;
       if (time - lastFrame < frameInterval) {
         raf = requestAnimationFrame(renderFrame);
         return;
@@ -195,23 +201,39 @@ export default function Plasma({
         pendingMouse.current = null;
       }
 
-      let elapsed = (time - started) * 0.001;
-      if (direction === 'pingpong') elapsed = 5 + Math.sin(elapsed * 0.35) * 5;
-      program.uniforms.iTime.value = elapsed;
+      if (previousTime) elapsed += (time - previousTime) * 0.001;
+      previousTime = time;
+      program.uniforms.iTime.value = direction === 'pingpong' ? 5 + Math.sin(elapsed * 0.35) * 5 : elapsed;
       renderer.render({ scene: mesh });
       raf = requestAnimationFrame(renderFrame);
     };
 
-    if (prefersReducedMotion) {
-      program.uniforms.iTime.value = 0;
-      renderer.render({ scene: mesh });
-    } else {
-      raf = requestAnimationFrame(renderFrame);
-    }
+    const syncAnimation = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      previousTime = 0;
+      lastFrame = 0;
+      if (!visible || document.hidden) return;
+      if (motionPreference.matches) renderer.render({ scene: mesh });
+      else raf = requestAnimationFrame(renderFrame);
+    };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      syncAnimation();
+    });
+    visibilityObserver.observe(containerEl);
+    document.addEventListener('visibilitychange', syncAnimation);
+    motionPreference.addEventListener('change', syncAnimation);
 
     return () => {
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', syncAnimation);
+      motionPreference.removeEventListener('change', syncAnimation);
+      geometry.remove();
+      gl.deleteProgram(program.program);
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
       containerEl.removeEventListener('mousemove', handleMouseMove);
       if (canvas.parentNode === containerEl) containerEl.removeChild(canvas);
     };

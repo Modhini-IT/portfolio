@@ -55,7 +55,7 @@ export default function Experience() {
     <section ref={stageRef} id="experience" className={`experience-stage scroll-stage ${reducedMotion ? 'is-reduced' : ''}`} aria-labelledby="experience-title">
       <div className="experience-sticky stage-sticky section-shell">
         <header className="experience-heading">
-          <p className="section-index">03 / EXPERIENCE</p>
+          <p className="section-index">04 / EXPERIENCE</p>
           <h2 id="experience-title">WHAT I'VE<br />BEEN BUILDING.</h2>
         </header>
         <div className="project-sequence">

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
+import WarpText from './WarpText';
 
 export default function OpeningStage() {
   const stageRef = useRef<HTMLElement>(null);
@@ -22,7 +23,18 @@ export default function OpeningStage() {
           <span>PORTFOLIO / 2026</span>
         </motion.div>
         <motion.h1 className="opening-title" style={{ scale: titleScale, y: titleY, opacity: titleOpacity }}>
-          MODHINI V
+          <WarpText
+            text="Modhini V"
+            color="#f8f5ff"
+            warpStrength={0.05}
+            warpScale={1.7}
+            speed={0.35}
+            pointerInfluence={0.38}
+            pointerStrength={0.28}
+            refraction={0.01}
+            ripple
+            fontFamily="inherit"
+          />
         </motion.h1>
         <motion.div className="opening-divider" style={{ scaleX: dividerScale }} />
         <motion.div className="opening-footer" style={{ opacity: introOpacity }}>

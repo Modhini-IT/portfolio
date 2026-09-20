@@ -1,0 +1,10 @@
+.opening-title:has(> .warp-text-source) { position:relative; }
+.warp-text-source { font:inherit; letter-spacing:inherit; }
+.warp-ready > .warp-text-source { color:transparent; }
+.warp-text-source::selection { color:#f8f5ff; background:#315c9b; }
+.warp-text-canvas { position:absolute; top:-16px; left:-16px; pointer-events:none; display:none; }
+.warp-ready > .warp-text-canvas { display:block; }
+@media (prefers-reduced-motion:reduce), (pointer:coarse), (max-width:900px) {
+  .warp-ready > .warp-text-source { color:inherit; }
+  .warp-ready > .warp-text-canvas { display:none; }
+}

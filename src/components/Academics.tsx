@@ -11,10 +11,10 @@ export default function Academics() {
   const scoreX = useTransform(scrollYProgress, [0.28, 0.66], [reducedMotion ? 0 : 100, 0]);
 
   return (
-    <section ref={stageRef} id="about" className="academics-stage scroll-stage" aria-labelledby="academics-title">
+    <section ref={stageRef} id="academics" className="academics-stage scroll-stage" aria-labelledby="academics-title">
       <div className="academics-sticky stage-sticky section-shell">
         <motion.div className="academics-copy" style={{ y: copyY, opacity: copyOpacity }}>
-          <p className="section-index">02 / ACADEMICS</p>
+          <p className="section-index">03 / ACADEMICS</p>
           <h2 id="academics-title">B.TECH<br />INFORMATION<br />TECHNOLOGY</h2>
           <p className="academic-college">SRI VENKATESWARA COLLEGE<br />OF ENGINEERING</p>
           <p className="academic-years">2025 — 2029</p>
